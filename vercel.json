@@ -1,11 +1,5 @@
 {
     "version": 2,
-    "functions": {
-      "server/server.js": {
-        "memory": 1024,
-        "maxDuration": 10
-      }
-    },
     "routes": [
         {
             "src": "/api/.*",

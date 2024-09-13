@@ -22,6 +22,9 @@ const userSchema = new mongoose.Schema({
     },
     events: { 
         type: Array
+    },
+    Goals: {
+        type: Array
     }
 });
 

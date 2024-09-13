@@ -2,17 +2,17 @@ const User = require("../database/Schema/Users");
 
 exports.createGoal = async (req, res) => {
     try {
-        const { MetaData } = req.body;
+        const { Meta } = req.body;
 
-        if (!MetaData) {
+        if (!Meta) {
             return res.status(400).json({ message: 'Datos de la meta no proporcionados' });
         }
 
-        const user = await User.findOne({ key: MetaData.key }).exec();
+        const user = await User.findOne({ key: Meta.key }).exec();
 
         if (user) {
             const newGoal = {
-                content: MetaData.metaText,
+                content: Meta.metaText,
                 timestamp: new Date(),
             };
 
@@ -20,7 +20,7 @@ exports.createGoal = async (req, res) => {
 
             await user.save();
 
-            res.status(200).json({ message: 'Meta guardada exitosamente', note: newNote });
+            res.status(200).json({ message: 'Meta guardada exitosamente', note: newGoal });
         } else {
             res.status(404).json({ message: 'Usuario no encontrado' });
         }

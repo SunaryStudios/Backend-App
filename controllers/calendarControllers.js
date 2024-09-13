@@ -9,7 +9,7 @@ exports.dayProblemCreate = async (req, res) => {
         }
 
         // Encontrar todos los usuarios que tengan el evento en la misma fecha
-        const usersWithEvent = await Userz.find({ 
+        const usersWithEvent = await User.find({ 
             "events.day": day.day, 
             "events.month": day.month, 
             "events.year": day.year 

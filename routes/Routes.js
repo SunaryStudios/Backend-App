@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/users', userController.createUser)
 router.get('/getNotes', noteController.noteRequest)
 router.get('/getProblems', calendarController.dayRequest)
+router.get('/getGoals', goalsController.goalsRequest)
 
 router.post('/getUser', userController.getUser)
 router.post('/createNote', noteController.createNote)

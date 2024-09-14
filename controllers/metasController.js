@@ -12,7 +12,9 @@ exports.createGoal = async (req, res) => {
 
         if (user) {
             const newGoal = {
+                title: Meta.metaTitle,
                 content: Meta.metaText,
+                completed: false,
                 timestamp: new Date(),
             };
 
@@ -30,32 +32,32 @@ exports.createGoal = async (req, res) => {
     }
 };
 
-exports.noteRequest = async (req, res) => {
+exports.goalsRequest = async (req, res) => {
     try {
-        const allNotes = await User.find({}, { 'notes': 1, 'name': 1, 'avatar': 1 });
+        const allGoals = await User.find({}, { 'Goals': 1, 'name': 1, 'avatar': 1 });
 
-        if (!allNotes.length) {
+        if (!allGoals.length) {
             return res.status(404).json({ message: 'No se encontraron notas' });
         }
 
-        const notesWithAuthor = [];
+        const goalsWithAuthor = [];
 
-        for (const user of allNotes) {
+        for (const user of allGoals) {
             let userUpdated = false; 
 
-            if (user.notes && user.notes.length) {
-                for (const note of user.notes) {
-                    if (!note.timestamp) {
-                        note.timestamp = new Date();
+            if (user.Goals && user.Goals.length) {
+                for (const goals of user.Goals) {
+                    if (!goals.timestamp) {
+                        goals.timestamp = new Date();
                         userUpdated = true;
                     }
-                    notesWithAuthor.push({
+                    goalsWithAuthor.push({
                         author: user.name,
                         avatar: user.avatar || '',
-                        content: note.content,
-                        emotion: note.emotion,
-                        color: note.color,
-                        timestamp: note.timestamp,
+                        title: goals.title,
+                        content: goals.content,
+                        completed: goals.completed,
+                        timestamp: goals.timestamp,
                     });
                 }
 
@@ -66,9 +68,9 @@ exports.noteRequest = async (req, res) => {
         }
 
         // Ordenar las notas por timestamp de la más reciente a la más antigua
-        notesWithAuthor.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        goalsWithAuthor.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        res.status(200).json(notesWithAuthor);
+        res.status(200).json(goalsWithAuthor);
 
     } catch (error) {
         console.error("Server Error:", error);

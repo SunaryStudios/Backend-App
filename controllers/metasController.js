@@ -1,4 +1,18 @@
 const User = require("../database/Schema/Users");
+const crypto = require('crypto')
+
+const generateUniqueId = async () => {
+    let id;
+    let isUnique = false;
+    while (!isUnique) {
+        id = crypto.randomBytes(16).toString('hex'); // Genera un ID aleatorio de 32 caracteres hexadecimales
+        const existingGoal = await User.findOne({ 'Goals.id': id }).exec(); // Verifica si el ID ya está en uso
+        if (!existingGoal) {
+            isUnique = true;
+        }
+    }
+    return id;
+};
 
 exports.createGoal = async (req, res) => {
     try {
@@ -11,7 +25,10 @@ exports.createGoal = async (req, res) => {
         const user = await User.findOne({ key: Meta.key }).exec();
 
         if (user) {
+            const newGoalId = await generateUniqueId(); // Genera un ID único
+
             const newGoal = {
+                id: newGoalId,
                 title: Meta.metaTitle,
                 content: Meta.metaText,
                 completed: false,

@@ -60,7 +60,7 @@ exports.goalsRequest = async (req, res) => {
         const goalsWithAuthor = [];
 
         for (const user of allGoals) {
-            let userUpdated = false; 
+            let userUpdated = false;
 
             if (user.Goals && user.Goals.length) {
                 for (const goals of user.Goals) {
@@ -90,6 +90,34 @@ exports.goalsRequest = async (req, res) => {
 
         res.status(200).json(goalsWithAuthor);
 
+    } catch (error) {
+        console.error("Server Error:", error);
+        res.status(500).json({ message: 'Error en el servidor', error });
+    }
+};
+
+exports.goalCompleted = async (req, res) => {
+    const { id, completed } = req.body;
+
+    try {
+
+        const user = await User.findOne({ 'Goals.id': id });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Goal no encontrado' });
+        }
+
+        const goal = user.Goals.find(goal => goal.id === id);
+
+        if (!goal) {
+            return res.status(404).json({ message: 'Goal no encontrado' });
+        }
+
+        goal.completed = completed;
+
+        await user.save();
+
+        res.status(200).json({ message: 'Goal actualizado correctamente', goal });
     } catch (error) {
         console.error("Server Error:", error);
         res.status(500).json({ message: 'Error en el servidor', error });

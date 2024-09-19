@@ -98,9 +98,9 @@ exports.goalsRequest = async (req, res) => {
 
 exports.goalCompleted = async (req, res) => {
     const { id, completed } = req.body;
+    console.log(id, completed);
 
     try {
-
         const user = await User.findOne({ 'Goals.id': id });
 
         if (!user) {
@@ -108,12 +108,15 @@ exports.goalCompleted = async (req, res) => {
         }
 
         const goal = user.Goals.find(goal => goal.id === id);
+        console.log(goal);
 
         if (!goal) {
             return res.status(404).json({ message: 'Goal no encontrado' });
         }
 
         goal.completed = completed;
+
+        user.markModified('Goals');
 
         await user.save();
 

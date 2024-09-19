@@ -15,6 +15,6 @@ router.post('/getUser', userController.getUser)
 router.post('/createNote', noteController.createNote)
 router.post('/problemDay', calendarController.dayProblemCreate)
 router.post('/createMeta', goalsController.createGoal)
-router.post('/api/completedGoal', goalsController.goalCompleted)
+router.post('/completedGoal', goalsController.goalCompleted)
 
 module.exports = router;

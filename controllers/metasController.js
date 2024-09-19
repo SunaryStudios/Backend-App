@@ -69,6 +69,7 @@ exports.goalsRequest = async (req, res) => {
                         userUpdated = true;
                     }
                     goalsWithAuthor.push({
+                        id: goals.id,
                         author: user.name,
                         avatar: user.avatar || '',
                         title: goals.title,

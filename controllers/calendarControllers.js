@@ -4,6 +4,8 @@ exports.dayProblemCreate = async (req, res) => {
     try {
         const { day } = req.body;
 
+        console.log('Día creado', day)
+
         if (!day) {
             return res.status(400).json({ message: 'Datos del día no proporcionados' });
         }

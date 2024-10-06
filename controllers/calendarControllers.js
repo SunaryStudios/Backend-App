@@ -14,18 +14,34 @@ exports.dayProblemCreate = async (req, res) => {
             year: day.year,
             response: day.response
         };
-        
-        const user = await User.findOneAndUpdate(
-            { key: day.user, "events.day": day.day, "events.month": day.month, "events.year": day.year },
-            { $set: { "events.$": newEvent } },
-            { new: true, upsert: true } 
-        );
+
+        // Buscar el usuario por clave
+        const user = await User.findOne({ key: day.user });
 
         if (user) {
+            // Buscar si ya existe un evento con el mismo día, mes y año
+            const existingEventIndex = user.events.findIndex(event =>
+                event.day === day.day &&
+                event.month === day.month &&
+                event.year === day.year
+            );
+
+            if (existingEventIndex !== -1) {
+                // Si existe, actualiza el evento
+                user.events[existingEventIndex] = newEvent;
+            } else {
+                // Si no existe, agrega el nuevo evento
+                user.events.push(newEvent);
+            }
+
+            // Guardar los cambios en el usuario
+            await user.save();
+
             return res.status(200).json({ message: 'Evento guardado exitosamente', day: newEvent });
         } else {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
+
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Error en el servidor', error });

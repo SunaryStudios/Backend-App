@@ -19,7 +19,29 @@ exports.dayProblemCreate = async (req, res) => {
         const user = await User.findOne({ key: day.user });
 
         if (user) {
-            // Buscar si ya existe un evento con el mismo día, mes y año
+            // Buscar si ya existe un evento con el mismo día, mes y año en cualquier otro usuario
+            const usersWithSameEvent = await User.find({
+                key: { $ne: day.user },
+                events: {
+                    $elemMatch: {
+                        day: day.day,
+                        month: day.month,
+                        year: day.year
+                    }
+                }
+            });
+
+            // Si se encuentra el evento en otro usuario, eliminarlo de sus eventos
+            for (let otherUser of usersWithSameEvent) {
+                otherUser.events = otherUser.events.filter(event =>
+                    event.day !== day.day ||
+                    event.month !== day.month ||
+                    event.year !== day.year
+                );
+                await otherUser.save();
+            }
+
+            // Buscar si ya existe un evento con el mismo día, mes y año en el usuario actual
             const existingEventIndex = user.events.findIndex(event =>
                 event.day === day.day &&
                 event.month === day.month &&
@@ -47,7 +69,6 @@ exports.dayProblemCreate = async (req, res) => {
         res.status(500).json({ message: 'Error en el servidor', error });
     }
 };
-
 
 exports.dayRequest = async (req, res) => {
     try {
